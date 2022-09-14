@@ -1,0 +1,66 @@
+package modelos;
+
+import java.sql.Timestamp;
+import java.util.Map;
+
+public class Auto {
+	private String patente;
+	private String marca;
+	private String tipoMotor;
+	private int dniDueno;
+	private Map<Timestamp,Servicio> historialServicios;
+	
+	public Auto(String patente, String marca, String tipoMotor, int dniDueno, Map<Timestamp,Servicio> historialServicios) {
+		super();
+		this.patente = patente;
+		this.marca = marca;
+		this.tipoMotor = tipoMotor;
+		this.dniDueno = dniDueno;
+		this.historialServicios = historialServicios;
+	}
+
+	public String getPatente() {
+		return patente;
+	}
+
+	public void setPatente(String patente) {
+		this.patente = patente;
+	}
+
+	public String getMarca() {
+		return marca;
+	}
+
+	public void setMarca(String marca) {
+		this.marca = marca;
+	}
+
+	public String getTipoMotor() {
+		return tipoMotor;
+	}
+
+	public void setTipoMotor(String tipoMotor) {
+		this.tipoMotor = tipoMotor;
+	}
+
+	public int getDniDueno() {
+		return dniDueno;
+	}
+
+	public void setDniDueno(int dniDueno) {
+		this.dniDueno = dniDueno;
+	}
+
+	public Map<Timestamp, Servicio> getHistorialServicios() {
+		return historialServicios;
+	}
+
+	public void setHistorialServicios(Map<Timestamp, Servicio> historialServicios) {
+		this.historialServicios = historialServicios;
+	}
+
+	public void addServicio(Timestamp timestamp,Servicio servicio) {
+		historialServicios.put(timestamp, servicio);
+	}
+	
+}

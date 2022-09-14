@@ -1,0 +1,15 @@
+package database;
+
+public class ServiciosTable {
+	
+	public void actualizarServicio(int id, int precio, DriverConexion driverConexion) {
+		InsertarModificarDB actualizarPrecio = new InsertarModificarDB();
+		try{
+			String s = "UPDATE servicio SET precio = "+precio+"  WHERE tipo = '"+id+"';";
+			actualizarPrecio.modificarInsertar(s, driverConexion);
+		}
+		catch(Exception e) {
+			System.out.println("Error al borrar");
+		}
+	}
+}

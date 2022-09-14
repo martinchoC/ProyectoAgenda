@@ -1,0 +1,25 @@
+package database;
+
+import modelos.Auto;
+
+public class AutoTable {
+
+	public void insertarAuto(Auto auto, DriverConexion driverConexion) {
+		try{
+			System.out.println(auto.getDniDueno());
+			driverConexion.insertarModificarEliminar("INSERT INTO auto VALUES ('"+auto.getPatente()+"', "+auto.getMarca()+", '"+auto.getTipoMotor()+"' ,'"+auto.getDniDueno()+"');");
+		}
+		catch(Exception e) {
+			System.out.println("Error al insertar");
+		}
+	}
+	
+	public void borrarAuto(Auto auto, DriverConexion driverConexion) {
+		try{
+			driverConexion.insertarModificarEliminar("DELETE FROM auto WHERE patente = '"+auto.getPatente()+"';");
+		}
+		catch(Exception e) {
+			System.out.println("Error al borrar");
+		}
+	}
+}

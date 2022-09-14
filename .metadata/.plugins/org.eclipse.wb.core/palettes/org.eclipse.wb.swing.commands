@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<commands>
+	<addCategory
+		id="category_1663137035628"
+		name="Custom"
+		description="Container for custom components"
+		visible="true"
+		open="true"/>
+	<addComponent
+		id="custom_1663137035628"
+		name="CalendarBuilder"
+		description="Creates java.text.CalendarBuilder component."
+		visible="true"
+		class="java.text.CalendarBuilder"
+		category="category_1663137035628"/>
+	<addComponent
+		id="custom_1663169520197"
+		name="CalendarBuilder"
+		description="Creates java.text.CalendarBuilder component."
+		visible="true"
+		class="java.text.CalendarBuilder"
+		category="category_1663137035628"/>
+	<addComponent
+		id="custom_1663169627501"
+		name="CalendarBuilder"
+		description="Creates java.text.CalendarBuilder component."
+		visible="true"
+		class="java.text.CalendarBuilder"
+		category="category_1663137035628"/>
+</commands>

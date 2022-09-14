@@ -1,0 +1,12 @@
+package modelos;
+
+import java.sql.Timestamp;
+
+public class historialServiciosAuto {
+	private int idServicio;
+	private Timestamp fechaServicio;
+	private String patente;
+	private int tipoServicio;
+	
+	
+}

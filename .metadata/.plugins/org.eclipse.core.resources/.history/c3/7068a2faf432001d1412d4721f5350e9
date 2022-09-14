@@ -1,0 +1,26 @@
+package database;
+
+import java.sql.Statement;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+import modelos.Persona;
+
+public class PersonaDB {
+	
+	private DriverConexion driverConexion;
+
+	public PersonaDB(DriverConexion driverConexion) {
+		this.driverConexion = driverConexion;
+	}
+
+	public void insertarPersona(Persona persona) {
+		try{
+			driverConexion.modificar("INSERT INTO persona VALUES ('"+persona.getDni()+"', "+persona.getNombre()+", '"+persona.getApellido()+"' ,'"+persona.getCantidadServicios()+"');",m);
+		}
+		catch(Exception e) {
+			System.out.println("Error al insertar");
+		}
+	}
+}

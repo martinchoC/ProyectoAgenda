@@ -1,0 +1,19 @@
+package database;
+
+import java.sql.Statement;
+
+import modelos.Persona;
+
+public class PersonaDB {
+
+	public PersonaDB() {}
+	
+	public void insertarPersona(Persona persona, DriverConexion driverConexion) {
+		ModificarDB m=new ModificarDB();
+		ModificarTabla mod=new ModificarTabla();
+		try {
+			Statement stm = driverConexion.getConexionBD();
+		}
+	}
+	
+}

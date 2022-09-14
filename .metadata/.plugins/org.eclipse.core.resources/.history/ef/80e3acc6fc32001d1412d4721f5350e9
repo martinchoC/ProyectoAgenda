@@ -1,0 +1,30 @@
+package database;
+
+import modelos.Servicio;
+
+public class ServiciosDB {
+	
+	private DriverConexion driverConexion;
+
+	public ServiciosDB(DriverConexion driverConexion) {
+		this.driverConexion = driverConexion;
+	}
+
+	public void insertarServicio(Servicio servicio) {
+		try{
+			driverConexion.insertarModificarEliminar("INSERT INTO servicio VALUES ('"+servicio.getTipo()+"', "+servicio.getPrecio()+", '"+servicio.getDescripcion()+"');");
+		}
+		catch(Exception e) {
+			System.out.println("Error al insertar");
+		}
+	}
+	
+	public void borrarServicio(Servicio servicio) {
+		try{
+			driverConexion.insertarModificarEliminar("DELETE FROM servicio WHERE tipo = '"+servicio.getTipo()+"';");
+		}
+		catch(Exception e) {
+			System.out.println("Error al borrar");
+		}
+	}
+}

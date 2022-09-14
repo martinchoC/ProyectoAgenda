@@ -1,0 +1,66 @@
+package database;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+public class DriverConexion {
+	protected Connection conexionDB = null;
+    static String login = "admin";
+    static String password = "admin";
+    static String url = "jdbc:mysql://localhost:3306/agendaservicios";
+
+    public DriverConexion(){}
+
+    public void conectarDB(){
+        if(this.conexionDB == null){
+            try
+            {
+                conexionDB = DriverManager.getConnection(url,login,password);
+
+                if (conexionDB != null) {
+                    System.out.println("Conexión a base de datos " + url + " ... Ok");
+                }
+            }
+            catch(SQLException ex){
+                System.out.println("Error al conectar a la base de datos");
+            }
+        }
+    }
+
+    public void desconectarDB()
+    {
+        if (this.conexionDB != null)
+        {
+            try
+            {
+                this.conexionDB.close();
+                this.conexionDB = null;
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("Error al desconectar la DB");
+            }
+        }
+    }
+    
+    public Connection getConexionBD()
+    {
+    	return conexionDB;
+    }
+
+    private java.sql.ResultSet consulta (String sql){
+        try
+        {
+            // Se crea una sentencia jdbc para realizar la consulta
+            java.sql.Statement stmt = conexionDB.createStatement();
+            // Se ejecuta la sentencia y se recibe un resultado
+            java.sql.ResultSet rs = stmt.executeQuery(sql);
+            return rs;
+        }
+        catch (java.sql.SQLException ex) {
+            System.out.println("Error al realizar la consulta");
+        }
+        return null;
+    }
+}

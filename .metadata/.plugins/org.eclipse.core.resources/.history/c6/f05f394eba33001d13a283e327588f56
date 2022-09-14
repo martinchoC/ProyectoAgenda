@@ -1,0 +1,53 @@
+package database;
+
+import java.awt.ScrollPane;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Vector;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
+public class ModificarTabla {
+	
+	public void refrescarTabla(String consulta, JTable tabla, DriverConexion dc) {
+		try {
+			// se crea una sentencia o comando jdbc para realizar la consulta
+			Statement stmt =dc.getConexionBD().createStatement();
+	
+		     // se ejecuta la sentencia y se recibe un resultset
+		     ResultSet rs = stmt.executeQuery(consulta);
+		     
+		     // se adapta el modelo de la tabla seg�n los metadatos del resultado
+		     ResultSetMetaData rsmd = rs.getMetaData();
+		     DefaultTableModel modelo = new DefaultTableModel();
+		     for (int i = 1; i <= rsmd.getColumnCount(); i++){
+		        String columnaNombre = rsmd.getColumnLabel(i);
+		        boolean columnaEditable = false;
+		        modelo.addColumn(columnaNombre);
+		     }
+		     tabla.setModel(modelo);
+		     // se recorre el resulset y se actualiza la tabla en pantalla
+		     while (rs.next()) {
+		        Vector<Object> fila = new Vector<Object>();  
+		        for (int j = 1; j <= rsmd.getColumnCount(); j++) { 
+		           fila.add(rs.getObject(j)); 
+		        } 
+		        ((DefaultTableModel) tabla.getModel()).addRow(fila);
+		     } 
+		     rs.close();
+		     stmt.close();
+		  }
+		  catch (SQLException ex) { 
+		     JOptionPane.showMessageDialog(new JFrame(),
+		                                   ex.getMessage() + "\n", 
+		                                   "Error al ejecutar la consulta.",
+		                                       JOptionPane.ERROR_MESSAGE);
+		         
+	      }
+	}
+	
+}

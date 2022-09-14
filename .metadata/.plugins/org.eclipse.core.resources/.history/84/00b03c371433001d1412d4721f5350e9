@@ -1,0 +1,39 @@
+package database;
+
+import java.sql.ResultSet;
+import java.sql.Statement;
+
+import modelos.Auto;
+
+public class AutoTable {
+	
+	private DriverConexion driverConexion;
+
+	public AutoTable(DriverConexion driverConexion) {
+		this.driverConexion = driverConexion;
+	}
+
+	public void insertarAuto(Auto auto) {
+		try{
+			driverConexion.insertarModificarEliminar("INSERT INTO auto VALUES ('"+auto.getPatente()+"', "+auto.getMarca()+", '"+auto.getTipoMotor()+"' ,'"+auto.getDniDueno()+"');");
+		}
+		catch(Exception e) {
+			System.out.println("Error al insertar");
+		}
+	}
+	
+	public void borrarAuto(Auto auto) {
+		try{
+			driverConexion.insertarModificarEliminar("DELETE FROM auto WHERE patente = '"+auto.getPatente()+"';");
+		}
+		catch(Exception e) {
+			System.out.println("Error al borrar");
+		}
+	}
+	
+	public void mostrarTabla() {
+		ResultSet rs = driverConexion.getConexionBD().createStatement();
+		
+	}
+
+}

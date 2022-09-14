@@ -1,0 +1,61 @@
+package modelos;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Persona {
+	private int dni;
+	private String nombre;
+	private String apellido;
+	private int cantidadServicios;
+	
+	public Persona(int dni, String nombre, String apellido, int cantidadServicios) {
+		this.dni = dni;
+		this.nombre = nombre;
+		this.apellido = apellido;
+		this.cantidadServicios = cantidadServicios;
+	}
+	
+	public Persona() {}
+
+	public int getDni() {
+		return dni;
+	}
+
+	public void setDni(int dni) {
+		this.dni = dni;
+	}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
+	}
+
+	public String getApellido() {
+		return apellido;
+	}
+
+	public void setApellido(String apellido) {
+		this.apellido = apellido;
+	}
+
+	public int getCantidadServicios() {
+		return cantidadServicios;
+	}
+
+	public void setCantidadServicios(int cantidadServicios) {
+		this.cantidadServicios = cantidadServicios;
+	}
+	
+	public List<String> toList() {
+		List<String> lista = new ArrayList<String>();
+		lista.add(String.valueOf(dni));
+		lista.add(nombre);
+		lista.add(apellido);
+		lista.add(String.valueOf(cantidadServicios));
+		return lista;
+	}
+}

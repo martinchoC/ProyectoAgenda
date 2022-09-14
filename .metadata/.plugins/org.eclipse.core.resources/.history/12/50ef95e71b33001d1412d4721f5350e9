@@ -1,0 +1,59 @@
+package database;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+
+import modelos.Auto;
+
+public class AutoTable {
+
+	public void insertarAuto(Auto auto, DriverConexion driverConexion) {
+		try{
+			driverConexion.insertarModificarEliminar("INSERT INTO auto VALUES ('"+auto.getPatente()+"', "+auto.getMarca()+", '"+auto.getTipoMotor()+"' ,'"+auto.getDniDueno()+"');");
+		}
+		catch(Exception e) {
+			System.out.println("Error al insertar");
+		}
+	}
+	
+	public void borrarAuto(Auto auto, DriverConexion driverConexion) {
+		try{
+			driverConexion.insertarModificarEliminar("DELETE FROM auto WHERE patente = '"+auto.getPatente()+"';");
+		}
+		catch(Exception e) {
+			System.out.println("Error al borrar");
+		}
+	}
+	
+	public void mostrarTabla(JTable tablaAutos, DriverConexion driverConexion) {
+		Statement st;
+		ResultSet rs;
+		Auto auto;
+		DefaultTableModel modeloTablaAuto = new DefaultTableModel();
+		tablaAutos = new JTable(modeloTablaAuto);
+		modeloTablaAuto.addColumn("Patente");
+		modeloTablaAuto.addColumn("Marca");
+		modeloTablaAuto.addColumn("Tipo de motor");
+		modeloTablaAuto.addColumn("DNI cliente");
+		try {
+			st = driverConexion.getConexionBD().createStatement();
+			rs = st.executeQuery("SELECT * FROM auto");
+		
+			while (rs.next()) {
+				Object [] fila = new Object[4];
+				for(int i = 0; i < 4; i++) {
+					fila[i] = rs.getObject(i + 1);
+					System.out.println(rs.getObject(i + 1));
+				}
+				modeloTablaAuto.addRow(fila);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+}

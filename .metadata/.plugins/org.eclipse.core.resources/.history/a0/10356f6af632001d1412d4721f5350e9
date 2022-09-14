@@ -1,0 +1,44 @@
+package database;
+
+import java.sql.Statement;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+import modelos.Persona;
+
+public class PersonaDB {
+	
+	private DriverConexion driverConexion;
+
+	public PersonaDB(DriverConexion driverConexion) {
+		this.driverConexion = driverConexion;
+	}
+
+	public void insertarPersona(Persona persona) {
+		try{
+			driverConexion.insertarModificarEliminar("INSERT INTO persona VALUES ('"+persona.getDni()+"', "+persona.getNombre()+", '"+persona.getApellido()+"' ,'"+persona.getCantidadServicios()+"');");
+		}
+		catch(Exception e) {
+			System.out.println("Error al insertar");
+		}
+	}
+	
+	public void borrarPersona(Persona persona) {
+		try{
+			driverConexion.insertarModificarEliminar("DELETE FROM persona WHERE DNI = '"+persona.getDni()+"';");
+		}
+		catch(Exception e) {
+			System.out.println("Error al insertar");
+		}
+	}
+	
+	public void actualizarPersona(Persona persona) {
+		try{
+			driverConexion.insertarModificarEliminar("UPDATE persona SET cantServicios = "+persona.getCantidadServicios()+"  WHERE DNI = '"+persona.getDni()+"';");
+		}
+		catch(Exception e) {
+			System.out.println("Error al insertar");
+		}
+	}
+}

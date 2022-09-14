@@ -1,0 +1,214 @@
+package vistas;
+
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import java.awt.FlowLayout;
+import javax.swing.JMenuBar;
+
+import database.AutoTable;
+import database.DriverConexion;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Panel;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JScrollPane;
+
+import java.awt.event.ActionListener;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Vector;
+import java.awt.event.ActionEvent;
+import java.awt.Dimension;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
+
+public class GUIBienvenida2 {
+
+	private DriverConexion driverConexion;
+	private JFrame frame;
+	private Panel panelMenu;
+	private JMenuBar menuBar;
+	private JMenu menuArchivo;
+	private JMenuItem menuItemSalir;
+	private JMenu menuAgenda;
+	private JMenuItem menuItemMostrarAgenda;
+	private JMenuItem menuItemCrearReserva;
+	private JMenu menuClientes;
+	private JMenuItem menuItemVerClientes;
+	private JMenuItem menuItemCrearCliente;
+	private JMenu menuVehiculos;
+	private JMenuItem menuItemVerVehiculo;
+	private JMenuItem menuItemCrearVehiculo;
+	private Panel panelContenido;
+	private Panel panelCalendario;
+	private Panel panelTabla;
+	private JScrollPane scrollPaneTabla;
+	private JTable tableAutos;
+	
+	private static AutoTable autoTable = new AutoTable();
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					GUIBienvenida2 window = new GUIBienvenida2();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public GUIBienvenida2() {
+		driverConexion = new DriverConexion();
+		driverConexion.conectarDB();
+		initialize();
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		frame = new JFrame();
+		frame.setBounds(100, 100, 800, 600);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(new BorderLayout(0, 0));
+		
+		panelMenu = new Panel();
+		FlowLayout flowLayout = (FlowLayout) panelMenu.getLayout();
+		flowLayout.setAlignment(FlowLayout.LEFT);
+		frame.getContentPane().add(panelMenu, BorderLayout.NORTH);
+		
+		panelContenido = new Panel();
+		frame.getContentPane().add(panelContenido, BorderLayout.CENTER);
+		panelContenido.setLayout(new BorderLayout(0, 0));
+		
+		panelCalendario = new Panel();
+		panelCalendario.setPreferredSize(new Dimension(200, 10));
+		panelContenido.add(panelCalendario, BorderLayout.WEST);
+		
+		panelTabla = new Panel();
+		//panelContenido.add(scrollPaneTabla);
+		
+		initMenu();		
+		mostrarTablaAutos();
+	}
+	
+	private void initMenu() {
+		menuBar = new JMenuBar();
+		panelMenu.add(menuBar);
+		
+		menuArchivo = new JMenu("Archivo");
+		menuBar.add(menuArchivo);
+		
+		menuItemSalir = new JMenuItem("Salir");
+		menuItemSalir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				driverConexion.desconectarDB();
+				System.exit(0);
+			}
+		});
+		menuArchivo.add(menuItemSalir);
+		
+		menuAgenda = new JMenu("Agenda");
+		menuBar.add(menuAgenda);
+		
+		menuItemMostrarAgenda = new JMenuItem("Mostrar agenda");
+		menuAgenda.add(menuItemMostrarAgenda);
+		
+		menuItemCrearReserva = new JMenuItem("Crear reserva");
+		menuAgenda.add(menuItemCrearReserva);
+		
+		menuClientes = new JMenu("Clientes");
+		menuBar.add(menuClientes);
+		
+		menuItemVerClientes = new JMenuItem("Ver clientes");
+		menuClientes.add(menuItemVerClientes);
+		
+		menuItemCrearCliente = new JMenuItem("Crear cliente");
+		menuClientes.add(menuItemCrearCliente);
+		
+		menuVehiculos = new JMenu("Vehiculo");
+		menuBar.add(menuVehiculos);
+		
+		menuItemVerVehiculo = new JMenuItem("Ver vehículos");
+		menuVehiculos.add(menuItemVerVehiculo);
+		
+		menuItemCrearVehiculo = new JMenuItem("Crear vehículo");
+		menuVehiculos.add(menuItemCrearVehiculo);
+	}
+	
+	private void mostrarTablaAutos() {
+		Statement st;
+		ResultSet rs;
+		try {
+			st = driverConexion.getConexionBD().createStatement();
+			rs = st.executeQuery("SELECT * FROM auto");
+			tableAutos = new JTable(buildTableModel(rs));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		panelContenido.add(new JScrollPane(tableAutos));
+	}
+	
+	private void tamanioTabla(JTable tabla) {
+		tabla.setAutoResizeMode( JTable.AUTO_RESIZE_OFF );
+		for (int column = 0; column < tabla.getColumnCount(); column++)
+		{
+		    TableColumn tableColumn = tabla.getColumnModel().getColumn(column);
+		    int preferredWidth = tableColumn.getMinWidth();
+		    int maxWidth = tableColumn.getMaxWidth();
+
+		    for (int row = 0; row < tabla.getRowCount(); row++)
+		    {
+		        TableCellRenderer cellRenderer = tabla.getCellRenderer(row, column);
+		        Component c = tabla.prepareRenderer(cellRenderer, row, column);
+		        int width = c.getPreferredSize().width + tabla.getIntercellSpacing().width;
+		        preferredWidth = Math.max(preferredWidth, width);
+
+		        //  We've exceeded the maximum width, no need to check other rows
+
+		        if (preferredWidth >= maxWidth)
+		        {
+		            preferredWidth = maxWidth;
+		            break;
+		        }
+		    }
+		    tableColumn.setPreferredWidth( preferredWidth );
+		}
+	}
+
+	private static DefaultTableModel buildTableModel(ResultSet rs) throws SQLException {
+	    ResultSetMetaData metaData = rs.getMetaData();
+	    //nombres de las columnas
+	    Vector<String> columnNames = new Vector<String>();
+	    int columnCount = metaData.getColumnCount();
+	    for (int column = 1; column <= columnCount; column++) {
+	        columnNames.add(metaData.getColumnName(column));
+	    }
+	    Vector<Vector<Object>> data = new Vector<Vector<Object>>();
+	    while (rs.next()) {
+	        Vector<Object> vector = new Vector<Object>();
+	        for (int columnIndex = 1; columnIndex <= columnCount; columnIndex++) {
+	            vector.add(rs.getObject(columnIndex));
+	        }
+	        data.add(vector);
+	    }
+	    return new DefaultTableModel(data, columnNames);
+	}
+	
+	
+}

@@ -1,0 +1,62 @@
+package modelos;
+
+import java.util.List;
+
+public class Auto {
+	private String patente;
+	private String marca;
+	private String tipoMotor;
+	private int dniDueno;
+	private List<Servicio> historialServicios;
+	
+	public Auto(String patente, String marca, String tipoMotor, int dniDueno, List<Servicio> historialServicios) {
+		super();
+		this.patente = patente;
+		this.marca = marca;
+		this.tipoMotor = tipoMotor;
+		this.dniDueno = dniDueno;
+		this.historialServicios = historialServicios;
+	}
+
+	public String getPatente() {
+		return patente;
+	}
+
+	public void setPatente(String patente) {
+		this.patente = patente;
+	}
+
+	public String getMarca() {
+		return marca;
+	}
+
+	public void setMarca(String marca) {
+		this.marca = marca;
+	}
+
+	public String getTipoMotor() {
+		return tipoMotor;
+	}
+
+	public void setTipoMotor(String tipoMotor) {
+		this.tipoMotor = tipoMotor;
+	}
+
+	public int getDniDueno() {
+		return dniDueno;
+	}
+
+	public void setDniDueno(int dniDueno) {
+		this.dniDueno = dniDueno;
+	}
+
+	public List<Servicio> getHistorialServicios() {
+		return historialServicios;
+	}
+
+	public void setHistorialServicios(List<Servicio> historialServicios) {
+		this.historialServicios = historialServicios;
+	}
+	
+	
+}

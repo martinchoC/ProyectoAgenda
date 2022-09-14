@@ -1,0 +1,30 @@
+package database;
+
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+
+public class InsertarModificarDB {
+
+	public void modificar(String modificacionInsersion, DriverConexion dc)	{
+		try{
+	        Statement stmt =dc.getConexionBD().createStatement();
+	        
+	        stmt.executeUpdate(modificacionInsersion);
+	        
+	        JOptionPane.showMessageDialog(null, "Modificacion realizada correctamente.","Informaci�n"
+					, JOptionPane.INFORMATION_MESSAGE);
+	
+	        stmt.close();
+	     }
+	     catch (SQLException ex) {
+	        
+	        JOptionPane.showMessageDialog(new JFrame(),
+	                                      ex.getMessage() + "\n", 
+	                                      "Error al ejecutar la consulta.",
+	                                      JOptionPane.ERROR_MESSAGE);
+	     }
+  }
+}

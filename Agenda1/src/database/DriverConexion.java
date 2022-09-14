@@ -1,0 +1,89 @@
+package database;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.Vector;
+
+import javax.swing.table.DefaultTableModel;
+
+public class DriverConexion {
+	private Connection conexionDB = null;
+    static String login = "admin";
+    static String password = "admin";
+    static String url = "jdbc:mysql://localhost:3306/agendaservicios";
+
+    public DriverConexion(){}
+
+    public void conectarDB(){
+        if(this.conexionDB == null){
+            try
+            {
+                conexionDB = DriverManager.getConnection(url,login,password);
+
+                if (conexionDB != null) {
+                    System.out.println("Conexión a base de datos " + url + " ... Ok");
+                }
+            }
+            catch(SQLException ex){
+                System.out.println("Error al conectar a la base de datos");
+            }
+        }
+    }
+
+    public void desconectarDB()
+    {
+        if (this.conexionDB != null)
+        {
+            try
+            {
+                this.conexionDB.close();
+                this.conexionDB = null;
+            }
+            catch (SQLException ex)
+            {
+                System.out.println("Error al desconectar la DB");
+            }
+        }
+    }
+    
+    public Connection getConexionBD()
+    {
+    	return conexionDB;
+    }
+  
+    public void insertarModificarEliminar(String modificacion) {
+		try{
+	        Statement stmt =this.getConexionBD().createStatement();      
+	        stmt.executeUpdate(modificacion);
+	        stmt.close();
+	     }
+	     catch (SQLException ex)
+	     {
+	        System.out.println("Error");
+	     }
+	}
+    
+    public static DefaultTableModel generarTablaConsulta(ResultSet rs) throws SQLException {
+	    ResultSetMetaData metaData = rs.getMetaData();
+	    //nombres de las columnas
+	    Vector<String> nombresColumnas = new Vector<String>();
+	    int numColumna = metaData.getColumnCount();
+	    for (int columna = 1; columna <= numColumna; columna++) {
+	        nombresColumnas.add(metaData.getColumnName(columna));
+	    }
+	    Vector<Vector<Object>> data = new Vector<Vector<Object>>();
+	    while (rs.next()) {
+	        Vector<Object> vector = new Vector<Object>();
+	        for (int columnIndex = 1; columnIndex <= numColumna; columnIndex++) {
+	            vector.add(rs.getObject(columnIndex));
+	        }
+	        data.add(vector);
+	    }
+	    return new DefaultTableModel(data, nombresColumnas);
+	}
+
+}

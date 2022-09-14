@@ -1,0 +1,748 @@
+package vistas;
+
+import java.awt.EventQueue;
+import javax.swing.JFrame;
+import database.AutoTable;
+import database.DbUtils;
+import database.DriverConexion;
+import database.HistorialTable;
+import database.PersonaTable;
+import database.ServiciosTable;
+import modelos.Auto;
+import modelos.Persona;
+import javax.swing.JScrollPane;
+import java.awt.event.ActionListener;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Date;
+import java.awt.event.ActionEvent;
+import javax.swing.JTable;
+import javax.swing.JTabbedPane;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.JComboBox;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.border.BevelBorder;
+import java.awt.Button;
+import java.awt.Panel;
+import javax.swing.JRadioButton;
+
+public class GUIBienvenida {
+
+	private static String [] meses = {"Enero","Febrero","Marzo","Abril","Mayo","Junio","Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre"};
+	private static String [] horaAtencion = {"10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00"};
+	private DriverConexion driverConexion;
+	private JFrame frame;
+	
+	private JTabbedPane tabbedPaneOpciones;
+	private JPanel panelAgenda;
+	private JPanel panelClientes;
+	private JPanel panelVehiculos;
+	
+	private JTable tablaResultadoVehiculos;
+	
+	private PersonaTable tablaPersonas;
+	private ArrayList<String> listaPatentes;
+	private ArrayList<String> listaDNI;
+	private ArrayList<String> listaServicios;
+	
+	private JPanel panelCRUDVehiculos;
+	private JLabel labelPatente;
+	private JTextField textFieldPatente;
+	private JLabel labelMarca;
+	private JTextField textFieldMarca;
+	private JLabel labelTipoMotor;
+	private JLabel labelDueno;
+	private JComboBox<String> comboBoxMotor;
+	private JComboBox<String> comboBoxDueno;
+	private JButton botonCrearAuto;
+	private JPanel panelTablaAutomoviles;
+	private JLabel labelInsertarAutomovil;
+	private JLabel lblVerAutomviles;
+	private JLabel lblDni;
+	private JTextField textFieldDNI;
+	private JButton botonCrearCliente;
+	private JLabel lblCRUDCliente;
+	private JPanel panel_1;
+	private JLabel lblVerClientes;
+	private JLabel lblNombre;
+	private JTextField textFieldNombre;
+	private JLabel lblApellido;
+	private JTextField textFieldApellido;
+	private JScrollPane scrollPaneCliente;
+	private JTable tableCliente;
+	private JScrollPane scrollPane;
+	private JTable tableVehiculos;
+	private JButton botonActualizarCliente;
+	private JButton btnBorrarCliente;
+	private JButton botonActualizarAuto;
+	private JButton botonBorrarAuto;
+	private JPanel panel_2;
+	private JPanel panel_3;
+	private JScrollPane scrollPane_1;
+	private JPanel panelServicios;
+	private JPanel panelHistorial;
+	private JPanel panel;
+	private JScrollPane scrollPaneServicios;
+	private JTable tableServicios;
+	private JTextField textFieldIdServicio;
+	private JLabel lblNewLabel;
+	private JLabel lblNuevoPrecio;
+	private JTextField textFieldPrecioServicio;
+	private Button buttonActualizarPrecioServicio;
+	private JPanel panel_4;
+	private JPanel panel_5;
+	private JLabel lblNewLabel_1;
+	private JButton btnBuscarHistorial;
+	private JScrollPane scrollPane_2;
+	private JTable tableHistorialPatente;
+	private JPanel panel_6;
+	private ButtonGroup groupMostrarAgenda;	
+	private JComboBox<String> comboBoxDia;
+	private JComboBox<String> comboBoxMes;
+	private JComboBox<String> comboBoxAnio;
+	private JButton btnResetBusqueda;
+	private JComboBox<String> comboBoxPatenteHistorial;
+	private JComboBox<String> comboBoxPatente;
+	private JComboBox comboBoxDiaReserva;
+	private JComboBox comboBoxMesReserva;
+	private JComboBox comboBoxAnioReserva;
+	private JTable tableAgenda;
+	private JComboBox comboBoxServicioReserva;
+	private JButton btnCrearReserva;
+	private JButton btnMostrarAgenda;
+	private JComboBox comboBoxHoraReserva;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					GUIBienvenida window = new GUIBienvenida();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public GUIBienvenida() {
+		driverConexion = new DriverConexion();
+		driverConexion.conectarDB();
+		try {
+			listaDNI = new PersonaTable().getDNIs(driverConexion);
+			listaPatentes = new AutoTable().getPatentes(driverConexion);
+			listaServicios = new ServiciosTable().getServicios(driverConexion);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		initialize();
+		
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		frame = new JFrame();
+		frame.setBounds(100, 100, 800, 600);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(null);
+		frame.setResizable(false);
+		
+		tabbedPaneOpciones = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPaneOpciones.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				cambiarTab();
+			}
+		});
+		tabbedPaneOpciones.setBounds(0, 0, 784, 561);
+		frame.getContentPane().add(tabbedPaneOpciones);
+		
+		panelAgenda = new JPanel();
+		tabbedPaneOpciones.addTab("Agenda", null, panelAgenda, null);
+		panelAgenda.setLayout(null);
+		
+		panel_2 = new JPanel();
+		panel_2.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		panel_2.setBounds(10, 11, 332, 128);
+		panelAgenda.add(panel_2);
+		panel_2.setLayout(null);
+		
+		JLabel lblNewLabel_2_1 = new JLabel("Mostrar agenda");
+		lblNewLabel_2_1.setBounds(10, 11, 143, 14);
+		panel_2.add(lblNewLabel_2_1);
+		
+		groupMostrarAgenda = new ButtonGroup();
+		
+		btnMostrarAgenda = new JButton("Mostrar");
+		btnMostrarAgenda.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+					mostrarAgendaDia();
+			}
+		});
+		btnMostrarAgenda.setBounds(237, 32, 86, 75);
+		panel_2.add(btnMostrarAgenda);
+		
+		panel_3 = new JPanel();
+		panel_3.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		panel_3.setBounds(10, 150, 759, 372);
+		panelAgenda.add(panel_3);
+		panel_3.setLayout(null);
+		
+		scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(0, 0, 759, 372);
+		panel_3.add(scrollPane_1);
+		
+		tableAgenda = new JTable();
+		scrollPane_1.setViewportView(tableAgenda);
+		
+		panel_6 = new JPanel();
+		panel_6.setLayout(null);
+		panel_6.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		panel_6.setBounds(352, 11, 417, 128);
+		panelAgenda.add(panel_6);
+		
+		comboBoxDia = new JComboBox();
+		comboBoxDia.setBounds(20, 62, 47, 22);
+		for(int dia = 1; dia <= 31; dia++) {
+			comboBoxDia.addItem(Integer.toString(dia));
+		}
+		panel_2.add(comboBoxDia);		
+		comboBoxMes = new JComboBox<String>();
+		comboBoxMes.setBounds(77, 62, 86, 22);
+		
+		for (String mes : meses) {
+			comboBoxMes.addItem(mes);
+		}
+		panel_2.add(comboBoxMes);
+		
+		comboBoxAnio = new JComboBox<String>();
+		comboBoxAnio.setBounds(173, 62, 54, 22);
+		for(int anio = 2020; anio <= 2030; anio++) {
+			comboBoxAnio.addItem(Integer.toString(anio));
+		}
+		panel_2.add(comboBoxAnio);
+		
+		JLabel labelFechaReserva_1 = new JLabel("Fecha");
+		labelFechaReserva_1.setBounds(20, 37, 57, 14);
+		panel_2.add(labelFechaReserva_1);
+		
+		JLabel lblNewLabel_2 = new JLabel("Crear reserva");
+		lblNewLabel_2.setBounds(10, 11, 143, 14);
+		panel_6.add(lblNewLabel_2);
+		
+		JLabel labelPatenteReserva = new JLabel("Patente");
+		labelPatenteReserva.setBounds(10, 36, 90, 14);
+		panel_6.add(labelPatenteReserva);
+		
+		JLabel labelServicioReserva = new JLabel("Servicio");
+		labelServicioReserva.setBounds(164, 65, 90, 14);
+		panel_6.add(labelServicioReserva);
+		
+		comboBoxPatente = new JComboBox();
+		comboBoxPatente.setBounds(80, 32, 73, 22);
+		comboBoxPatente.setModel(new DefaultComboBoxModel(listaPatentes.toArray()));
+		panel_6.add(comboBoxPatente);
+		
+		comboBoxServicioReserva = new JComboBox();
+		comboBoxServicioReserva.setBounds(224, 61, 183, 22);
+		comboBoxServicioReserva.setModel(new DefaultComboBoxModel(listaServicios.toArray()));
+		panel_6.add(comboBoxServicioReserva);
+		
+		btnCrearReserva = new JButton("Crear reserva");
+		btnCrearReserva.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try {
+					crearReserva();
+				} catch (ParseException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}			    
+			}
+		});
+		btnCrearReserva.setBounds(10, 94, 397, 23);
+		panel_6.add(btnCrearReserva);
+		
+		JLabel labelFechaReserva = new JLabel("Fecha");
+		labelFechaReserva.setBounds(167, 36, 57, 14);
+		panel_6.add(labelFechaReserva);
+		
+		JLabel labelHoraReserva = new JLabel("Hora");
+		labelHoraReserva.setBounds(10, 65, 57, 14);
+		panel_6.add(labelHoraReserva);
+		
+		comboBoxHoraReserva = new JComboBox();
+		comboBoxHoraReserva.setBounds(80, 61, 73, 22);
+		for (String hora : horaAtencion) {
+			comboBoxHoraReserva.addItem(hora);
+		}
+		panel_6.add(comboBoxHoraReserva);
+		
+		comboBoxDiaReserva = new JComboBox();
+		comboBoxDiaReserva.setBounds(224, 32, 47, 22);
+		for(int dia = 1; dia <= 31; dia++) {
+			comboBoxDiaReserva.addItem(Integer.toString(dia));
+		}
+		panel_6.add(comboBoxDiaReserva);
+		
+		comboBoxMesReserva = new JComboBox();
+		comboBoxMesReserva.setBounds(274, 32, 73, 22);
+		for(String mes : meses) {
+			comboBoxMesReserva.addItem(mes);
+		}
+		panel_6.add(comboBoxMesReserva);
+		
+		comboBoxAnioReserva = new JComboBox();
+		comboBoxAnioReserva.setBounds(353, 32, 54, 22);
+		for(int anio = 2020; anio <= 2030; anio++) {
+			comboBoxAnioReserva.addItem(Integer.toString(anio));
+		}
+		panel_6.add(comboBoxAnioReserva);
+		
+		panelClientes = new JPanel();
+		tabbedPaneOpciones.addTab("Clientes", null, panelClientes, null);
+		panelClientes.setLayout(null);
+		
+		lblDni = new JLabel("DNI");
+		lblDni.setBounds(42, 395, 46, 14);
+		panelClientes.add(lblDni);
+		
+		textFieldDNI = new JTextField();
+		textFieldDNI.setColumns(10);
+		textFieldDNI.setBounds(120, 392, 162, 20);
+		panelClientes.add(textFieldDNI);
+		
+		lblCRUDCliente = new JLabel("Insertar, Actualizar o borrar cliente");
+		lblCRUDCliente.setBounds(20, 354, 185, 14);
+		panelClientes.add(lblCRUDCliente);
+		
+		panel_1 = new JPanel();
+		panel_1.setLayout(null);
+		panel_1.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		panel_1.setBounds(10, 11, 759, 321);
+		panelClientes.add(panel_1);
+		
+		lblVerClientes = new JLabel("Ver Clientes");
+		lblVerClientes.setBounds(10, 11, 94, 14);
+		panel_1.add(lblVerClientes);
+		
+		scrollPaneCliente = new JScrollPane();
+		scrollPaneCliente.setBounds(10, 30, 739, 280);
+		panel_1.add(scrollPaneCliente);
+		
+		tableCliente = new JTable();
+		scrollPaneCliente.setViewportView(tableCliente);
+		
+		lblNombre = new JLabel("Nombre");
+		lblNombre.setBounds(42, 436, 46, 14);
+		panelClientes.add(lblNombre);
+		
+		textFieldNombre = new JTextField();
+		textFieldNombre.setColumns(10);
+		textFieldNombre.setBounds(120, 433, 162, 20);
+		panelClientes.add(textFieldNombre);
+		
+		lblApellido = new JLabel("Apellido");
+		lblApellido.setBounds(42, 477, 46, 14);
+		panelClientes.add(lblApellido);
+		
+		textFieldApellido = new JTextField();
+		textFieldApellido.setColumns(10);
+		textFieldApellido.setBounds(120, 474, 162, 20);
+		panelClientes.add(textFieldApellido);
+		
+		botonCrearCliente = new JButton("Crear cliente");
+		botonCrearCliente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				crearPersona();
+				mostrarTabla(tableCliente,"SELECT * FROM persona");
+			}
+		});
+		botonCrearCliente.setBounds(321, 392, 138, 96);
+		panelClientes.add(botonCrearCliente);
+		
+		botonActualizarCliente = new JButton("Actualizar cliente");
+		botonActualizarCliente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				actualizarPersona();
+				mostrarTabla(tableCliente,"SELECT * FROM persona");
+			}
+		});
+		botonActualizarCliente.setBounds(462, 392, 138, 96);
+		panelClientes.add(botonActualizarCliente);
+		
+		btnBorrarCliente = new JButton("Borrar cliente");
+		btnBorrarCliente.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				borrarPersona();
+				mostrarTabla(tableCliente,"SELECT * FROM persona");
+			}
+		});
+		btnBorrarCliente.setBounds(604, 392, 138, 96);
+		panelClientes.add(btnBorrarCliente);
+		
+		panelVehiculos = new JPanel();
+		tabbedPaneOpciones.addTab("Vehículos", null, panelVehiculos, null);
+		panelVehiculos.setLayout(null);
+		
+		panelCRUDVehiculos = new JPanel();
+		panelCRUDVehiculos.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		panelCRUDVehiculos.setBounds(10, 343, 759, 179);
+		panelVehiculos.add(panelCRUDVehiculos);
+		panelCRUDVehiculos.setLayout(null);
+		
+		labelPatente = new JLabel("Patente");
+		labelPatente.setBounds(21, 68, 63, 14);
+		panelCRUDVehiculos.add(labelPatente);
+		
+		textFieldPatente = new JTextField();
+		textFieldPatente.setBounds(116, 65, 162, 20);
+		panelCRUDVehiculos.add(textFieldPatente);
+		textFieldPatente.setColumns(10);
+		
+		labelMarca = new JLabel("Marca");
+		labelMarca.setBounds(309, 68, 46, 14);
+		panelCRUDVehiculos.add(labelMarca);
+		
+		textFieldMarca = new JTextField();
+		textFieldMarca.setColumns(10);
+		textFieldMarca.setBounds(365, 65, 162, 20);
+		panelCRUDVehiculos.add(textFieldMarca);
+		
+		labelTipoMotor = new JLabel("Tipo de motor");
+		labelTipoMotor.setBounds(21, 112, 85, 14);
+		panelCRUDVehiculos.add(labelTipoMotor);
+		
+		labelDueno = new JLabel("Dueño");
+		labelDueno.setBounds(309, 108, 46, 14);
+		panelCRUDVehiculos.add(labelDueno);
+		
+		comboBoxMotor = new JComboBox<String>();
+		comboBoxMotor.setBounds(116, 108, 162, 22);
+		panelCRUDVehiculos.add(comboBoxMotor);
+		String [] tiposMotor = {"Naftero","Diesel"};
+		for (String motor : tiposMotor) {
+			comboBoxMotor.addItem(motor);
+		}
+		comboBoxMotor.setEditable(false);
+		
+		comboBoxDueno = new JComboBox<String>();
+		comboBoxDueno.setBounds(365, 104, 162, 22);
+		panelCRUDVehiculos.add(comboBoxDueno);
+		comboBoxDueno.setModel(new DefaultComboBoxModel(listaDNI.toArray()));
+		
+		botonCrearAuto = new JButton("Crear vehiculo");
+		botonCrearAuto.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				crearVehiculo();
+				mostrarTabla(tableVehiculos,"SELECT * FROM auto");	
+			}
+		});
+		botonCrearAuto.setBounds(580, 49, 133, 23);
+		panelCRUDVehiculos.add(botonCrearAuto);
+		
+		botonActualizarAuto = new JButton("Actualizar vehiculo");
+		botonActualizarAuto.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				actualizarVehiculo();
+				mostrarTabla(tableVehiculos,"SELECT * FROM auto");
+			}
+		});
+		botonActualizarAuto.setBounds(580, 84, 133, 23);
+		panelCRUDVehiculos.add(botonActualizarAuto);
+		
+		botonBorrarAuto = new JButton("Borrar vehiculo");
+		botonBorrarAuto.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				borrarVehiculo();
+				mostrarTabla(tableVehiculos,"SELECT * FROM auto");
+			}
+		});
+		botonBorrarAuto.setBounds(580, 118, 133, 23);
+		panelCRUDVehiculos.add(botonBorrarAuto);
+		
+		labelInsertarAutomovil = new JLabel("Insertar, actualizar y borrar automovil");
+		labelInsertarAutomovil.setBounds(10, 11, 739, 14);
+		panelCRUDVehiculos.add(labelInsertarAutomovil);
+		
+		panelTablaAutomoviles = new JPanel();
+		panelTablaAutomoviles.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		panelTablaAutomoviles.setBounds(10, 11, 759, 321);
+		panelVehiculos.add(panelTablaAutomoviles);
+		panelTablaAutomoviles.setLayout(null);
+		
+		lblVerAutomviles = new JLabel("Ver automóviles");
+		lblVerAutomviles.setBounds(10, 11, 216, 14);
+		panelTablaAutomoviles.add(lblVerAutomviles);
+		
+		scrollPane = new JScrollPane();
+		scrollPane.setBounds(10, 31, 739, 279);
+		panelTablaAutomoviles.add(scrollPane);
+		
+		tableVehiculos = new JTable();
+		scrollPane.setViewportView(tableVehiculos);
+		
+		panelServicios = new JPanel();
+		tabbedPaneOpciones.addTab("Servicios", null, panelServicios, null);
+		panelServicios.setLayout(null);
+		
+		panel = new JPanel();
+		panel.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		panel.setBounds(10, 11, 759, 307);
+		panelServicios.add(panel);
+		panel.setLayout(null);
+		
+		scrollPaneServicios = new JScrollPane();
+		scrollPaneServicios.setBounds(0, 0, 759, 307);
+		panel.add(scrollPaneServicios);
+		
+		tableServicios = new JTable();
+		scrollPaneServicios.setViewportView(tableServicios);
+		
+		textFieldIdServicio = new JTextField();
+		textFieldIdServicio.setBounds(377, 391, 158, 20);
+		panelServicios.add(textFieldIdServicio);
+		textFieldIdServicio.setColumns(10);
+		
+		lblNewLabel = new JLabel("Numero de servicio");
+		lblNewLabel.setBounds(231, 394, 136, 14);
+		panelServicios.add(lblNewLabel);
+		
+		lblNuevoPrecio = new JLabel("Nuevo precio");
+		lblNuevoPrecio.setBounds(231, 425, 136, 14);
+		panelServicios.add(lblNuevoPrecio);
+		
+		textFieldPrecioServicio = new JTextField();
+		textFieldPrecioServicio.setColumns(10);
+		textFieldPrecioServicio.setBounds(377, 422, 158, 20);
+		panelServicios.add(textFieldPrecioServicio);
+		
+		buttonActualizarPrecioServicio = new Button("Actualizar precio");
+		buttonActualizarPrecioServicio.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				actualizarPrecioServicio();
+				mostrarTabla(tableServicios,"SELECT * FROM servicio;");
+			}
+		});
+		buttonActualizarPrecioServicio.setBounds(270, 464, 265, 22);
+		panelServicios.add(buttonActualizarPrecioServicio);
+		
+		panelHistorial = new JPanel();
+		tabbedPaneOpciones.addTab("Historial", null, panelHistorial, null);
+		panelHistorial.setLayout(null);
+		
+		panel_4 = new JPanel();
+		panel_4.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		panel_4.setBounds(10, 10, 759, 96);
+		panelHistorial.add(panel_4);
+		panel_4.setLayout(null);
+		
+		lblNewLabel_1 = new JLabel("Buscar servicios brindados al vehiculo con patente");
+		lblNewLabel_1.setBounds(10, 11, 376, 20);
+		panel_4.add(lblNewLabel_1);
+		
+		btnBuscarHistorial = new JButton("Buscar");
+		btnBuscarHistorial.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String patente = String.valueOf(comboBoxPatenteHistorial.getSelectedItem()); 
+				System.out.println(patente);
+				String consulta = "SELECT fecha, autopatente, descripcion_servicio, precio FROM historial h NATURAL JOIN servicio s WHERE h.servicio_tipo=s.tipo AND h.autopatente = '"+ patente+"'";
+				mostrarTabla(tableHistorialPatente, consulta);
+			}
+		});
+		btnBuscarHistorial.setBounds(106, 42, 89, 23);
+		panel_4.add(btnBuscarHistorial);
+
+		
+		comboBoxPatenteHistorial = new JComboBox();
+		comboBoxPatenteHistorial.setBounds(10, 42, 89, 22);
+		comboBoxPatenteHistorial.setModel(new DefaultComboBoxModel(listaPatentes.toArray()));
+		panel_4.add(comboBoxPatenteHistorial);
+		panel_5 = new JPanel();
+		panel_5.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+		panel_5.setBounds(10, 112, 759, 410);
+		panelHistorial.add(panel_5);
+		panel_5.setLayout(null);
+		
+		scrollPane_2 = new JScrollPane();
+		scrollPane_2.setBounds(10, 11, 739, 388);
+		panel_5.add(scrollPane_2);
+		
+		tableHistorialPatente = new JTable();
+		scrollPane_2.setViewportView(tableHistorialPatente);
+	}
+
+	private void cambiarTab() {
+		switch (tabbedPaneOpciones.getSelectedIndex()) {
+			case 0: {
+				break;
+			}
+			case 1: {
+				String consulta = "SELECT * FROM persona";
+				mostrarTabla(tableCliente , consulta);
+				break;
+			}
+			case 2: {
+				String consulta = "SELECT * FROM auto";
+				mostrarTabla(tableVehiculos, consulta);
+				break;
+			}
+			case 3: {
+				String consulta = "SELECT * FROM servicio";
+				mostrarTabla(tableServicios, consulta);
+			}
+			case 4: {
+				System.out.print(tabbedPaneOpciones.getSelectedIndex());
+				break;
+			}
+		} 
+	}
+	
+	private void crearPersona() {
+		Persona persona = new Persona(Integer.parseInt(textFieldDNI.getText()),textFieldNombre.getText(), textFieldApellido.getText(), 0);
+		PersonaTable pt = new PersonaTable();
+		pt.insertarPersona(persona, driverConexion);
+		try {
+			listaDNI = tablaPersonas.getDNIs(driverConexion);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		comboBoxDueno.setModel(new DefaultComboBoxModel(listaDNI.toArray()));
+	}
+	
+	private void actualizarPersona() {
+		Persona persona = new Persona(Integer.parseInt(textFieldDNI.getText()),textFieldNombre.getText(), textFieldApellido.getText(), 0);
+		PersonaTable pt = new PersonaTable();
+		pt.actualizarPersona(persona, driverConexion);
+		
+	}
+	
+	private void borrarPersona() {
+		int dni = Integer.parseInt(textFieldDNI.getText());
+		PersonaTable pt = new PersonaTable();
+		pt.borrarPersona(dni, driverConexion);
+		try {
+			listaDNI = tablaPersonas.getDNIs(driverConexion);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		comboBoxDueno.setModel(new DefaultComboBoxModel(listaDNI.toArray()));
+	}
+	
+	public void crearVehiculo() {
+		int dni = Integer.parseInt((String) comboBoxDueno.getSelectedItem());
+		Auto auto = new Auto(textFieldPatente.getText(), textFieldMarca.getText(), String.valueOf(comboBoxMotor.getSelectedItem()) , dni);
+		AutoTable at = new AutoTable();
+		at.insertarAuto(auto, driverConexion);
+		try {
+			listaPatentes = new AutoTable().getPatentes(driverConexion);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		comboBoxPatente.setModel(new DefaultComboBoxModel(listaPatentes.toArray()));
+		comboBoxPatenteHistorial.setModel(new DefaultComboBoxModel(listaPatentes.toArray()));
+	}
+	
+	public void actualizarVehiculo() {
+		int dni = Integer.parseInt((String) comboBoxDueno.getSelectedItem());
+		Auto auto = new Auto(textFieldPatente.getText(), textFieldMarca.getText(), String.valueOf(comboBoxMotor.getSelectedItem()) , dni);
+		AutoTable at = new AutoTable();
+		at.modificarAuto(auto, driverConexion);
+	}
+	public void borrarVehiculo() {
+		int dni = Integer.parseInt((String) comboBoxDueno.getSelectedItem());
+		Auto auto = new Auto(textFieldPatente.getText(), textFieldMarca.getText(), String.valueOf(comboBoxMotor.getSelectedItem()) , dni);
+		AutoTable at = new AutoTable();
+		at.borrarAuto(auto, driverConexion);
+		try {
+			listaPatentes = new AutoTable().getPatentes(driverConexion);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		comboBoxPatente.setModel(new DefaultComboBoxModel(listaPatentes.toArray()));
+		comboBoxPatenteHistorial.setModel(new DefaultComboBoxModel(listaPatentes.toArray()));
+	}
+	
+	private void actualizarPrecioServicio() {
+		int id = Integer.valueOf(textFieldIdServicio.getText());
+		int precio = Integer.valueOf(textFieldPrecioServicio.getText());
+		ServiciosTable st = new ServiciosTable();
+		st.actualizarServicio(id, precio, driverConexion);
+	}
+	
+	private void crearReserva() throws ParseException {
+		String patente = String.valueOf(comboBoxPatente.getSelectedItem()); 
+		int dia = comboBoxDiaReserva.getSelectedIndex()+1; 
+		String diaString = String.valueOf(dia);
+		if(dia < 10) diaString = "0" + diaString;
+		int tipoServicio = comboBoxServicioReserva.getSelectedIndex() + 1;
+		int mes = comboBoxMesReserva.getSelectedIndex()+1; 
+		String mesString = String.valueOf(mes);
+		if(mes < 10) mesString = "0"+mesString;
+		String anio = String.valueOf(comboBoxAnioReserva.getSelectedItem());
+		String hora = String.valueOf(comboBoxHoraReserva.getSelectedItem())+":00";
+		String diaReserva = anio+"-"+mesString+"-"+diaString+" "+hora;  
+	    HistorialTable historialTable = new HistorialTable();
+	    historialTable.insertarServicio(patente, diaReserva, tipoServicio, driverConexion);
+	    
+	}
+	
+	private void mostrarAgendaHoy() {
+		String consulta = "SELECT * FROM historial WHERE DATE(fecha) = NOW()";
+		mostrarTabla(tableAgenda, consulta);
+	}
+	
+	private void mostrarAgendaDia() {
+		int dia = comboBoxDia.getSelectedIndex()+1; 
+		String diaString = String.valueOf(dia);
+		if(dia < 10) diaString = "0" + diaString;
+		int mes = comboBoxMes.getSelectedIndex()+1; 
+		String mesString = String.valueOf(mes);
+		if(mes < 10) mesString = "0"+mesString;
+		String anio = String.valueOf(comboBoxAnio.getSelectedItem());
+		String diaReserva = anio+"-"+mesString+"-"+diaString;		
+		String consulta = "SELECT fecha, autopatente, nombre, apellido, descripcion_servicio FROM historial h "
+				+ "			NATURAL JOIN servicio s NATURAL JOIN persona p NATURAL JOIN auto a "
+				+ "			WHERE autopatente = a.patente AND a.persona_dni = p.dni AND"
+				+ "			h.servicio_tipo=s.tipo AND DATE(fecha) = '" + diaReserva+"'";
+		mostrarTabla(tableAgenda, consulta);
+	}
+	
+	//Rellenar una tabla a partir de una query
+	private void mostrarTabla(JTable tablaInsertar, String consulta) {
+		Statement st;
+		ResultSet rs;
+		try {
+			st = driverConexion.getConexionBD().createStatement();
+			rs = st.executeQuery(consulta);
+			tablaInsertar.setModel(DbUtils.resultSetToTableModel(rs));
+			st.close();
+			rs.close();
+		} 
+		catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+}

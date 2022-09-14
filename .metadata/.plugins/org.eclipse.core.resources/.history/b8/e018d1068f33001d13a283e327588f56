@@ -1,0 +1,107 @@
+package database;
+
+import java.awt.BorderLayout;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
+
+import modelos.Persona;
+
+public class PersonaTable {
+	
+	private DriverConexion driverConexion;
+
+	public void insertarPersona(Persona persona) {
+		try{
+			driverConexion.insertarModificarEliminar("INSERT INTO persona VALUES ('"+persona.getDni()+"', "+persona.getNombre()+", '"+persona.getApellido()+"' ,'"+persona.getCantidadServicios()+"');");
+		}
+		catch(Exception e) {
+			System.out.println("Error al insertar");
+		}
+	}
+	
+	public void borrarPersona(Persona persona) {
+		try{
+			driverConexion.insertarModificarEliminar("DELETE FROM persona WHERE DNI = '"+persona.getDni()+"';");
+		}
+		catch(Exception e) {
+			System.out.println("Error al borrar");
+		}
+	}
+	
+	public void actualizarPersona(Persona persona) {
+		try{
+			driverConexion.insertarModificarEliminar("UPDATE persona SET cantServicios = "+persona.getCantidadServicios()+"  WHERE DNI = '"+persona.getDni()+"';");
+		}
+		catch(Exception e) {
+			System.out.println("Error al actualizar");
+		}
+	}
+	
+	public ArrayList<Persona> getPersonas(DriverConexion driverConexion) throws SQLException{
+		ArrayList<Persona> personas = new ArrayList<Persona>();
+		String consulta = "SELECT * FROM persona";
+		Persona persona = new Persona();
+		ResultSet rs = driverConexion.getConexionBD().createStatement().executeQuery(consulta);
+		ResultSetMetaData metaData = rs.getMetaData();
+		int numColumna = metaData.getColumnCount();
+		while(rs.next()) {
+			for (int columnIndex = 1; columnIndex <= numColumna; columnIndex++) {
+				switch (columnIndex) {
+					case 1: {
+						persona.setDni((Integer) rs.getObject(columnIndex));
+					}
+					case 2: {
+						persona.setNombre((String) rs.getObject(columnIndex));
+					}
+					case 3: {
+						persona.setApellido((String) rs.getObject(columnIndex));
+					}
+					case 4: {
+						persona.setCantidadServicios((int) rs.getObject(columnIndex));
+					}
+				}
+	        }
+			personas.add(persona);
+		}
+		return personas;
+	}
+	
+//	private DefaultTableModel mostrarTabla(JPanel panelInsertar, JTable tablaInsertar, ArrayList<Persona> listaPersonas) {
+
+	public DefaultTableModel mostrarTabla(ArrayList<Persona> listaPersonas) {
+		String[] nombresColumnas = {
+				"DNI",
+                "Nombre",
+                "Apellido",
+                "Cantidad de servicios realizados"};
+		DefaultTableModel modelo = new DefaultTableModel(nombresColumnas,0);
+		for (Persona p : listaPersonas) {
+			modelo.addRow(p.toList().toArray());
+		}
+		return modelo;
+		
+		/*Statement st;
+		ResultSet rs;
+		try {
+			st = driverConexion.getConexionBD().createStatement();
+			rs = st.executeQuery(consulta);
+			tablaInsertar = new JTable(DriverConexion.generarTablaConsulta(rs));
+			panelInsertar.setLayout(new BorderLayout());
+			panelInsertar.add(new JScrollPane(tablaInsertar),BorderLayout.CENTER);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}*/
+	}
+}

@@ -1,0 +1,33 @@
+package database;
+
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.ArrayList;
+
+public class ServiciosTable {
+	
+	public void actualizarServicio(int id, int precio, DriverConexion driverConexion) {
+		InsertarModificarDB actualizarPrecio = new InsertarModificarDB();
+		try{
+			String s = "UPDATE servicio SET precio = "+precio+"  WHERE tipo = '"+id+"';";
+			actualizarPrecio.modificarInsertar(s, driverConexion);
+		}
+		catch(Exception e) {
+			System.out.println("Error al borrar");
+		}
+	}
+	
+	public ArrayList<String> getServicios(String motor, DriverConexion driverConexion) throws SQLException{
+		ArrayList<String> servicios = new ArrayList<String>();
+		String consulta = "SELECT patente FROM auto";
+		ResultSet rs = driverConexion.getConexionBD().createStatement().executeQuery(consulta);
+		ResultSetMetaData metaData = rs.getMetaData();
+		int numColumna = metaData.getColumnCount();
+		while(rs.next()) {
+			String s = (String) rs.getObject(1);
+			autosPatentes.add(s);
+		}
+		return autosPatentes;
+	}
+}
